@@ -1,6 +1,24 @@
-import { useBlockRoute } from '../../hooks/useBlockRoute'
-import { WalletButton } from '../../components/shared/ConnectWallet'
-import { ShipmentStatus, type Shipment } from '../../config/contracts'
+import { useState, useEffect } from 'react'
+
+enum ShipmentStatus {
+  Created,
+  QualityChecked,
+  InTransit,
+  Delayed,
+  Disputed,
+  ResolvingDispute,
+  Delivered,
+  Rejected,
+  Cancelled
+}
+
+interface Shipment {
+  id: number
+  productName: string
+  supplier: string
+  receiver: string
+  status: ShipmentStatus
+}
 
 function getStatusColor(status: ShipmentStatus): string {
   switch (status) {
@@ -27,47 +45,66 @@ function getStatusColor(status: ShipmentStatus): string {
   }
 }
 
-function truncateAddress(address: string): string {
-  return `${address.slice(0, 6)}...${address.slice(-4)}`
-}
+// Mock data
+const mockShipments: Shipment[] = [
+  {
+    id: 1,
+    productName: "Electronics Package",
+    supplier: "Tech Supplies Inc",
+    receiver: "Digital Store",
+    status: ShipmentStatus.InTransit
+  },
+  {
+    id: 2,
+    productName: "Medical Supplies",
+    supplier: "HealthCare Ltd",
+    receiver: "City Hospital",
+    status: ShipmentStatus.Delivered
+  },
+  {
+    id: 3,
+    productName: "Food Products",
+    supplier: "Fresh Foods Co",
+    receiver: "Supermarket Chain",
+    status: ShipmentStatus.QualityChecked
+  },
+  {
+    id: 4,
+    productName: "Construction Materials",
+    supplier: "Build Supply Co",
+    receiver: "Construction Site",
+    status: ShipmentStatus.Created
+  },
+  {
+    id: 5,
+    productName: "Textile Goods",
+    supplier: "Fabric World",
+    receiver: "Fashion Outlet",
+    status: ShipmentStatus.InTransit
+  }
+]
 
 export default function Dashboard() {
-  const { address, totalShipments, useShipment } = useBlockRoute()
+  const [isLoading, setIsLoading] = useState(true)
+  const [shipments, setShipments] = useState<Shipment[]>([])
 
-  // Get the last 5 shipments if total shipments is available
-  const total = totalShipments ? Number(totalShipments) : 0
-  const shipment1 = useShipment(BigInt(total))
-  const shipment2 = useShipment(BigInt(Math.max(total - 1, 0)))
-  const shipment3 = useShipment(BigInt(Math.max(total - 2, 0)))
-  const shipment4 = useShipment(BigInt(Math.max(total - 3, 0)))
-  const shipment5 = useShipment(BigInt(Math.max(total - 4, 0)))
+  useEffect(() => {
+    // Simulate API call
+    const fetchShipments = async () => {
+      setIsLoading(true)
+      try {
+        // Simulate network delay
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        setShipments(mockShipments)
+      } catch (error) {
+        console.error('Error fetching shipments:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
 
-  const isLoading = [shipment1, shipment2, shipment3, shipment4, shipment5]
-    .some(s => s.isLoading)
-
-  const shipments = [
-    shipment1.data,
-    shipment2.data,
-    shipment3.data,
-    shipment4.data,
-    shipment5.data
-  ].filter((s): s is Shipment => Boolean(s))
-
-  if (!address) {
-    return (
-      <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
-        <div className="text-center p-8">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-            Connect Your Wallet
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">
-            Please connect your wallet to view the dashboard
-          </p>
-          <WalletButton />
-        </div>
-      </div>
-    )
-  }
+    fetchShipments()
+  }, [])
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
@@ -76,7 +113,25 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <div className="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg">
             <h3 className="text-lg font-semibold mb-2">Total Shipments</h3>
-            <p className="text-3xl font-bold text-orange-500">{totalShipments?.toString() || '0'}</p>
+            <p className="text-3xl font-bold text-orange-500">{shipments.length}</p>
+          </div>
+          <div className="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg">
+            <h3 className="text-lg font-semibold mb-2">In Transit</h3>
+            <p className="text-3xl font-bold text-orange-500">
+              {shipments.filter(s => s.status === ShipmentStatus.InTransit).length}
+            </p>
+          </div>
+          <div className="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg">
+            <h3 className="text-lg font-semibold mb-2">Delivered</h3>
+            <p className="text-3xl font-bold text-orange-500">
+              {shipments.filter(s => s.status === ShipmentStatus.Delivered).length}
+            </p>
+          </div>
+          <div className="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg">
+            <h3 className="text-lg font-semibold mb-2">Pending</h3>
+            <p className="text-3xl font-bold text-orange-500">
+              {shipments.filter(s => s.status === ShipmentStatus.Created).length}
+            </p>
           </div>
         </div>
 
@@ -92,13 +147,13 @@ export default function Dashboard() {
             ) : shipments.length > 0 ? (
               shipments.map((shipment) => (
                 <div 
-                  key={shipment.id.toString()}
+                  key={shipment.id}
                   className="flex items-center justify-between p-4 bg-white dark:bg-gray-700 rounded-lg"
                 >
                   <div>
                     <h4 className="font-semibold">{shipment.productName}</h4>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      From: {truncateAddress(shipment.supplier)} To: {truncateAddress(shipment.receiver)}
+                      From: {shipment.supplier} To: {shipment.receiver}
                     </p>
                   </div>
                   <span className={`px-3 py-1 rounded-full text-sm ${getStatusColor(shipment.status)}`}>

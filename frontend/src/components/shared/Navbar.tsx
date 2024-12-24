@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { WalletButton } from './ConnectWallet'
 import { ThemeToggle } from '../../providers/ThemeProvider'
 import { MobileMenu } from './MobileMenu'
 
@@ -16,7 +15,7 @@ export function Navbar() {
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <Link to="/" className="text-xl font-bold text-orange-500">
-              BlockRoute
+              SuiviClair
             </Link>
 
             {/* Navigation Links */}
@@ -67,11 +66,6 @@ export function Navbar() {
             <div className="flex items-center space-x-4">
               {/* Theme Toggle */}
               <ThemeToggle />
-              
-              {/* Wallet Connection */}
-              <div className="hidden md:block">
-                <WalletButton />
-              </div>
 
               {/* Mobile Menu Button */}
               <button 

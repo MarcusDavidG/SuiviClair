@@ -1,22 +1,18 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
+import * as React from 'react'
+import * as ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 import 'leaflet/dist/leaflet.css'
 import './styles/leaflet.css'
-import { WagmiProvider } from './providers/WagmiProvider'
 import { ThemeProvider } from './providers/ThemeProvider'
-import { Buffer } from 'buffer'
 
-// Polyfill Buffer for viem
-window.Buffer = Buffer
+const rootElement = document.getElementById('root')
+if (!rootElement) throw new Error('Root element not found')
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
-    <WagmiProvider>
-      <ThemeProvider>
-        <App />
-      </ThemeProvider>
-    </WagmiProvider>
+    <ThemeProvider>
+      <App />
+    </ThemeProvider>
   </React.StrictMode>,
 )

@@ -50,7 +50,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                     className="text-xl font-bold text-orange-500"
                     onClick={onClose}
                   >
-                    BlockRoute
+                    SuiviClair
                   </Link>
                   <ThemeToggle />
                   <button

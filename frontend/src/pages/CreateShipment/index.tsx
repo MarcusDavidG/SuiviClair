@@ -1,8 +1,5 @@
 import { useState } from 'react'
-import { useAccount } from 'wagmi'
-import { WalletButton } from '../../components/shared/ConnectWallet'
 import { useNavigate } from 'react-router-dom'
-import { useBlockRoute } from '../../hooks/useBlockRoute'
 
 interface LocationInput {
   name: string
@@ -23,9 +20,10 @@ interface FormData {
 
 export default function CreateShipment() {
   const navigate = useNavigate()
-  const { address } = useAccount()
-  const { useCreateShipment } = useBlockRoute()
-  const [formTouched, setFormTouched] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isSuccess, setIsSuccess] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  
   const [formData, setFormData] = useState<FormData>({
     productName: '',
     description: '',
@@ -58,48 +56,8 @@ export default function CreateShipment() {
     formData.arrivesOn
   )
 
-  const getContractArgs = () => {
-    if (!address || !isFormValid) return undefined
-
-    const args = [
-      formData.productName,
-      formData.description,
-      address,
-      address,
-      address,
-      {
-        latitude: formData.origin.latitude,
-        longitude: formData.origin.longitude,
-        name: formData.origin.name,
-        timestamp: BigInt(new Date(formData.deliveredOn).getTime() / 1000),
-        updatedBy: address
-      },
-      {
-        latitude: formData.destination.latitude,
-        longitude: formData.destination.longitude,
-        name: formData.destination.name,
-        timestamp: BigInt(new Date(formData.arrivesOn).getTime() / 1000),
-        updatedBy: address
-      },
-      BigInt(new Date(formData.arrivesOn).getTime() / 1000),
-      formData.isTemperatureSensitive,
-      formData.isHumiditySensitive,
-      "0x0000000000000000000000000000000000000000000000000000000000000001"
-    ] as const
-
-    return args
-  }
-
-  const { write, isLoading, isSuccess, error } = useCreateShipment(
-    formTouched && isFormValid ? getContractArgs() : undefined
-  )
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value, type } = e.target as HTMLInputElement
-    
-    if (!formTouched) {
-      setFormTouched(true)
-    }
     
     if (id.includes('.')) {
       // Handle nested location objects
@@ -121,36 +79,28 @@ export default function CreateShipment() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!address || !write || !isFormValid) return
+    if (!isFormValid) return
 
     try {
-      await write()
+      setIsLoading(true)
+      setError(null)
+      
+      // Mock API call
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      console.log('Shipment created:', formData)
+      setIsSuccess(true)
+      
+      // Redirect to dashboard after successful creation
+      setTimeout(() => {
+        navigate('/dashboard')
+      }, 2000)
     } catch (err) {
       console.error('Failed to create shipment:', err)
+      setError('Failed to create shipment. Please try again.')
+    } finally {
+      setIsLoading(false)
     }
-  }
-
-  // Redirect to dashboard after successful creation
-  if (isSuccess) {
-    setTimeout(() => {
-      navigate('/dashboard')
-    }, 2000)
-  }
-
-  if (!address) {
-    return (
-      <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
-        <div className="text-center p-8">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-            Connect Your Wallet
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">
-            Please connect your wallet to create a shipment
-          </p>
-          <WalletButton />
-        </div>
-      </div>
-    )
   }
 
   return (
@@ -161,9 +111,9 @@ export default function CreateShipment() {
             Create a new Shipment
           </h1>
 
-          {formTouched && isFormValid && error && (
+          {error && (
             <div className="mb-6 p-4 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-100 rounded">
-              Error: {error.message}
+              Error: {error}
             </div>
           )}
 
@@ -384,7 +334,7 @@ export default function CreateShipment() {
               type="submit" 
               className="w-full bg-orange-500 text-white p-3 rounded font-bold 
                        hover:bg-orange-600 transition-colors disabled:bg-gray-400"
-              disabled={isLoading || !write || !isFormValid}
+              disabled={isLoading || !isFormValid}
             >
               {isLoading ? 'Creating Shipment...' : 'Create Shipment'}
             </button>

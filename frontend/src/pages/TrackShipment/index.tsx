@@ -1,10 +1,7 @@
 import { useState, useEffect } from 'react'
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
-import { useBlockRoute } from '../../hooks/useBlockRoute'
-import { WalletButton } from '../../components/shared/ConnectWallet'
-import { ShipmentStatus } from '../../config/contracts'
 import { MapLoading, MapError, MapNoData } from '../../components/shared/MapLoading'
-import L from 'leaflet'
+import * as L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
 // Custom marker icons
@@ -25,6 +22,54 @@ const destinationIcon = new L.Icon({
   popupAnchor: [1, -34],
   shadowSize: [41, 41]
 })
+
+enum ShipmentStatus {
+  Created,
+  QualityChecked,
+  InTransit,
+  Delayed,
+  Disputed,
+  ResolvingDispute,
+  Delivered,
+  Rejected,
+  Cancelled
+}
+
+interface Location {
+  name: string
+  latitude: string
+  longitude: string
+  timestamp: number
+}
+
+interface Shipment {
+  id: string
+  productName: string
+  status: ShipmentStatus
+  origin: Location
+  destination: Location
+  estimatedDeliveryDate: number
+}
+
+// Mock shipment data
+const mockShipment: Shipment = {
+  id: "123",
+  productName: "Electronics Package",
+  status: ShipmentStatus.InTransit,
+  origin: {
+    name: "New York Warehouse",
+    latitude: "40.7128",
+    longitude: "-74.0060",
+    timestamp: Date.now() - 86400000 // 24 hours ago
+  },
+  destination: {
+    name: "Los Angeles Distribution Center",
+    latitude: "34.0522",
+    longitude: "-118.2437",
+    timestamp: Date.now() + 86400000 * 2 // 48 hours from now
+  },
+  estimatedDeliveryDate: Date.now() + 86400000 * 2 // 48 hours from now
+}
 
 // Map bounds adjuster component
 function MapBounds({ coordinates }: { coordinates: [number, number][] }) {
@@ -55,44 +100,39 @@ function MapBounds({ coordinates }: { coordinates: [number, number][] }) {
 export default function TrackShipment() {
   const [shipmentId, setShipmentId] = useState('')
   const [isTracking, setIsTracking] = useState(false)
-  const { address, useShipment, useTransitHistory } = useBlockRoute()
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [shipment, setShipment] = useState<Shipment | null>(null)
 
-  // Get shipment data
-  const { 
-    data: shipment,
-    isLoading: isLoadingShipment,
-    error: shipmentError 
-  } = useShipment(isTracking ? BigInt(shipmentId) : 0n)
-
-  // Get transit history
-  const {
-    isLoading: isLoadingHistory,
-    error: historyError
-  } = useTransitHistory(isTracking ? BigInt(shipmentId) : 0n)
-
-  const handleTrackShipment = (e: React.FormEvent) => {
+  const handleTrackShipment = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsTracking(true)
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      if (shipmentId === mockShipment.id) {
+        setShipment(mockShipment)
+      } else {
+        setError('Shipment not found')
+        setShipment(null)
+      }
+    } catch {
+      setError('Failed to fetch shipment data')
+      setShipment(null)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleReset = () => {
     setIsTracking(false)
-  }
-
-  if (!address) {
-    return (
-      <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
-        <div className="text-center p-8">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-            Connect Your Wallet
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">
-            Please connect your wallet to track shipments
-          </p>
-          <WalletButton />
-        </div>
-      </div>
-    )
+    setShipmentId('')
+    setShipment(null)
+    setError(null)
   }
 
   return (
@@ -105,9 +145,9 @@ export default function TrackShipment() {
                 Track Your Shipment
               </h1>
 
-              {(shipmentError || historyError) && (
+              {error && (
                 <div className="mb-6 p-4 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-100 rounded">
-                  Error: {shipmentError?.message || historyError?.message}
+                  Error: {error}
                 </div>
               )}
 
@@ -124,7 +164,7 @@ export default function TrackShipment() {
                     className="w-full p-3 bg-white dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 
                              text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 
                              focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                    placeholder="Enter your shipment ID"
+                    placeholder="Enter your shipment ID (try: 123)"
                     required
                   />
                 </div>
@@ -192,7 +232,7 @@ export default function TrackShipment() {
                         <h3 className="font-bold">Origin</h3>
                         <p>{shipment.origin.name}</p>
                         <p className="text-sm text-gray-500">
-                          {new Date(Number(shipment.origin.timestamp)).toLocaleString()}
+                          {new Date(shipment.origin.timestamp).toLocaleString()}
                         </p>
                       </div>
                     </Popup>
@@ -211,7 +251,7 @@ export default function TrackShipment() {
                         <h3 className="font-bold">Destination</h3>
                         <p>{shipment.destination.name}</p>
                         <p className="text-sm text-gray-500">
-                          ETA: {new Date(Number(shipment.estimatedDeliveryDate)).toLocaleString()}
+                          ETA: {new Date(shipment.estimatedDeliveryDate).toLocaleString()}
                         </p>
                       </div>
                     </Popup>
@@ -225,10 +265,9 @@ export default function TrackShipment() {
                 </MapContainer>
               )}
             </div>
-            {(isLoadingShipment || isLoadingHistory) && <MapLoading />}
-            {shipmentError && <MapError message={shipmentError.message} />}
-            {historyError && <MapError message={historyError.message} />}
-            {!isLoadingShipment && !shipment && <MapNoData />}
+            {isLoading && <MapLoading />}
+            {error && <MapError message={error} />}
+            {!isLoading && !shipment && !error && <MapNoData />}
           </div>
         </div>
       )}
