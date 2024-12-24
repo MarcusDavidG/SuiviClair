@@ -1,100 +1,100 @@
-# SuiviClair - Privacy-First Supply Chain Management on Starknet
+# SuiviClair - Supply Chain Management Frontend
 
-SuiviClair ("Clear Tracking" in French) is a revolutionary privacy-centric supply chain management dApp built on Starknet, leveraging both Cairo SDK and Calimero SDK to provide secure, private, and transparent supply chain operations.
+SuiviClair ("Clear Tracking" in French) is a modern supply chain management application focused on providing clear, transparent tracking of shipments.
 
-## 🔒 Privacy Features
+## Current State
 
-- **Private Shipment Data**: Using Calimero SDK for encrypted storage of sensitive shipment details
-- **Zero-Knowledge Proofs**: Leveraging Starknet's Cairo for verifiable tracking without revealing sensitive data
-- **Selective Disclosure**: Granular control over what information is shared with different stakeholders
-- **Private State Channels**: Secure communication channels between parties using Calimero's privacy infrastructure
+### Frontend Implementation
+- React + TypeScript + Vite application
+- TailwindCSS for styling
+- Responsive design with dark mode support
+- Map integration with Leaflet for shipment tracking
 
-## 🚀 Core Features
+### Core Features
+- Shipment Creation Form
+  - Product details
+  - Sender/Receiver information
+  - Package specifications
+  - Special handling instructions
 
-- **Private Shipment Creation**:
-  - Encrypted product details
-  - Private origin/destination locations
-  - Confidential temperature and humidity settings
-  - Secure document attachments
+- Dashboard
+  - Shipment statistics overview
+  - Recent shipments list
+  - Quick access to create new shipments
 
-- **Privacy-Preserving Tracking**:
-  - Zero-knowledge location updates
-  - Encrypted environmental monitoring
-  - Private transit history
-  - Selective data sharing
+- Shipment Tracking
+  - Real-time map visualization
+  - Shipment status updates
+  - Origin and destination markers
 
-- **Secure Quality Control**:
-  - Private inspection records
-  - Encrypted quality metrics
-  - Confidential inspector notes
-  - Secure alert system
+### Project Structure
+```
+frontend/
+├── src/
+│   ├── assets/          # Images and static assets
+│   ├── components/      # Reusable UI components
+│   ├── config/          # Configuration files
+│   ├── pages/          # Main application pages
+│   ├── providers/      # Context providers
+│   └── styles/         # Global styles and CSS
+```
 
-## 🛠 Technology Stack
-
-- **Blockchain & Privacy**:
-  - Starknet (Layer 2 scaling with built-in privacy)
-  - Cairo SDK (Zero-knowledge proofs and secure computation)
-  - Calimero SDK (Privacy infrastructure and secure data management)
-
-- **Frontend**:
-  - React + TypeScript
-  - TailwindCSS
-  - Starknet.js
-  - Calimero Client SDK
-
-## 🔍 Implementation Details
-
-### Cairo SDK Integration
-- Zero-knowledge proofs for shipment verification
-- Private state transitions
-- Secure computation for supply chain logic
-- Privacy-preserving smart contracts
-
-### Calimero SDK Usage
-- Encrypted data storage
-- Private state channels
-- Secure key management
-- Confidential transaction handling
-
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Node.js v18+
-- Cairo toolchain
-- Calimero SDK access
+- npm or yarn
 
 ### Installation
-
 1. Clone the repository:
 ```bash
 git clone https://github.com/MarcusDavidG/SuiviClair.git
 cd SuiviClair
 ```
 
-2. Install dependencies:
+2. Install frontend dependencies:
 ```bash
 cd frontend
 npm install
 ```
 
-3. Configure environment:
-```bash
-cp .env.example .env
-# Add your Calimero and Starknet credentials
+3. Create a `.env` file in the frontend directory:
+```env
+VITE_WALLET_CONNECT_PROJECT_ID=your_project_id
 ```
 
-4. Start development server:
+4. Start the development server:
 ```bash
 npm run dev
 ```
 
-## 🏗 Architecture
+The application will be available at `http://localhost:5173` (or next available port).
 
-### Privacy Layer (Calimero SDK)
-- Encrypted data storage
-- Secure communication channels
-- Private state management
-- Access control
+## Features
+
+### Shipment Creation
+- Comprehensive form for new shipments
+- Input validation
+- Support for special handling instructions
+- Real-time feedback
+
+### Dashboard
+- Overview of all shipments
+- Statistics and metrics
+- Quick actions for common tasks
+- Status filtering
+
+### Shipment Tracking
+- Interactive map interface
+- Real-time status updates
+- Detailed shipment information
+- Route visualization
+
+## Development
+
+### Tech Stack
+- React 18
+- TypeScript
 
 ### Zero-Knowledge Layer (Cairo SDK)
 - ZK-proofs generation
