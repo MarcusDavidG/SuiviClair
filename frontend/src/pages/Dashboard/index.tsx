@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 
 enum ShipmentStatus {
   Created,
@@ -45,57 +46,16 @@ function getStatusColor(status: ShipmentStatus): string {
   }
 }
 
-// Mock data
-const mockShipments: Shipment[] = [
-  {
-    id: 1,
-    productName: "Electronics Package",
-    supplier: "Tech Supplies Inc",
-    receiver: "Digital Store",
-    status: ShipmentStatus.InTransit
-  },
-  {
-    id: 2,
-    productName: "Medical Supplies",
-    supplier: "HealthCare Ltd",
-    receiver: "City Hospital",
-    status: ShipmentStatus.Delivered
-  },
-  {
-    id: 3,
-    productName: "Food Products",
-    supplier: "Fresh Foods Co",
-    receiver: "Supermarket Chain",
-    status: ShipmentStatus.QualityChecked
-  },
-  {
-    id: 4,
-    productName: "Construction Materials",
-    supplier: "Build Supply Co",
-    receiver: "Construction Site",
-    status: ShipmentStatus.Created
-  },
-  {
-    id: 5,
-    productName: "Textile Goods",
-    supplier: "Fabric World",
-    receiver: "Fashion Outlet",
-    status: ShipmentStatus.InTransit
-  }
-]
-
 export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true)
   const [shipments, setShipments] = useState<Shipment[]>([])
 
   useEffect(() => {
-    // Simulate API call
     const fetchShipments = async () => {
       setIsLoading(true)
       try {
-        // Simulate network delay
         await new Promise(resolve => setTimeout(resolve, 1000))
-        setShipments(mockShipments)
+        setShipments([])
       } catch (error) {
         console.error('Error fetching shipments:', error)
       } finally {
@@ -137,7 +97,16 @@ export default function Dashboard() {
 
         {/* Recent Activity */}
         <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-6">
-          <h3 className="text-xl font-bold mb-4">Recent Shipments</h3>
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-xl font-bold">Recent Shipments</h3>
+            <Link 
+              to="/create" 
+              className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors"
+            >
+              Create New Shipment
+            </Link>
+          </div>
+          
           <div className="space-y-4">
             {isLoading ? (
               <div className="text-center py-4">
@@ -162,7 +131,36 @@ export default function Dashboard() {
                 </div>
               ))
             ) : (
-              <p className="text-gray-600 dark:text-gray-400">No recent shipments</p>
+              <div className="text-center py-12">
+                <svg 
+                  className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-600" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor"
+                >
+                  <path 
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+                  />
+                </svg>
+                <h3 className="mt-4 text-lg font-medium text-gray-900 dark:text-white">
+                  No shipments found
+                </h3>
+                <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                  Get started by creating a new shipment
+                </p>
+                <Link 
+                  to="/create"
+                  className="mt-6 inline-flex items-center px-4 py-2 border border-transparent 
+                           shadow-sm text-sm font-medium rounded-md text-white bg-orange-500 
+                           hover:bg-orange-600 focus:outline-none focus:ring-2 
+                           focus:ring-offset-2 focus:ring-orange-500"
+                >
+                  Create Shipment
+                </Link>
+              </div>
             )}
           </div>
         </div>

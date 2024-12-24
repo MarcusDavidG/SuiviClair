@@ -1,93 +1,60 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-interface LocationInput {
-  name: string
-  latitude: string
-  longitude: string
-}
-
 interface FormData {
   productName: string
   description: string
-  origin: LocationInput
-  destination: LocationInput
-  deliveredOn: string
-  arrivesOn: string
-  isTemperatureSensitive: boolean
-  isHumiditySensitive: boolean
+  senderName: string
+  senderEmail: string
+  senderPhone: string
+  receiverName: string
+  receiverEmail: string
+  receiverPhone: string
+  pickupAddress: string
+  deliveryAddress: string
+  weight: string
+  dimensions: string
+  isFragile: boolean
+  specialInstructions: string
 }
 
 export default function CreateShipment() {
   const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   
   const [formData, setFormData] = useState<FormData>({
     productName: '',
     description: '',
-    origin: {
-      name: '',
-      latitude: '',
-      longitude: ''
-    },
-    destination: {
-      name: '',
-      latitude: '',
-      longitude: ''
-    },
-    deliveredOn: '',
-    arrivesOn: '',
-    isTemperatureSensitive: false,
-    isHumiditySensitive: false
+    senderName: '',
+    senderEmail: '',
+    senderPhone: '',
+    receiverName: '',
+    receiverEmail: '',
+    receiverPhone: '',
+    pickupAddress: '',
+    deliveryAddress: '',
+    weight: '',
+    dimensions: '',
+    isFragile: false,
+    specialInstructions: ''
   })
-
-  const isFormValid = Boolean(
-    formData.productName &&
-    formData.description &&
-    formData.origin.name &&
-    formData.origin.latitude &&
-    formData.origin.longitude &&
-    formData.destination.name &&
-    formData.destination.latitude &&
-    formData.destination.longitude &&
-    formData.deliveredOn &&
-    formData.arrivesOn
-  )
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value, type } = e.target as HTMLInputElement
-    
-    if (id.includes('.')) {
-      // Handle nested location objects
-      const [parent, child] = id.split('.')
-      setFormData(prev => ({
-        ...prev,
-        [parent]: {
-          ...(prev[parent as keyof FormData] as LocationInput),
-          [child]: value
-        }
-      }))
-    } else {
-      setFormData(prev => ({
-        ...prev,
-        [id]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
-      }))
-    }
+    setFormData(prev => ({
+      ...prev,
+      [id]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
+    }))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!isFormValid) return
+    setIsLoading(true)
 
     try {
-      setIsLoading(true)
-      setError(null)
-      
-      // Mock API call
+      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000))
-      
       console.log('Shipment created:', formData)
       setIsSuccess(true)
       
@@ -95,9 +62,8 @@ export default function CreateShipment() {
       setTimeout(() => {
         navigate('/dashboard')
       }, 2000)
-    } catch (err) {
-      console.error('Failed to create shipment:', err)
-      setError('Failed to create shipment. Please try again.')
+    } catch (error) {
+      console.error('Failed to create shipment:', error)
     } finally {
       setIsLoading(false)
     }
@@ -105,17 +71,11 @@ export default function CreateShipment() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 py-8 px-4">
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-3xl mx-auto">
         <div className="bg-gray-100 dark:bg-gray-800 rounded-lg shadow-lg p-8">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">
-            Create a new Shipment
+            Create New Shipment
           </h1>
-
-          {error && (
-            <div className="mb-6 p-4 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-100 rounded">
-              Error: {error}
-            </div>
-          )}
 
           {isSuccess && (
             <div className="mb-6 p-4 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-100 rounded">
@@ -124,217 +84,262 @@ export default function CreateShipment() {
           )}
           
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label htmlFor="productName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Product Name
-              </label>
-              <input 
-                type="text" 
-                id="productName" 
-                value={formData.productName}
-                onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
-                         bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                         focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                placeholder="Enter product name"
-                required
-              />
-            </div>
-
-            <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Description
-              </label>
-              <textarea 
-                id="description" 
-                value={formData.description}
-                onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
-                         bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                         focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                placeholder="Enter description"
-                rows={3}
-                required
-              />
-            </div>
-
-            {/* Origin Location */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white">Origin Location</h3>
+            {/* Product Information */}
+            <div className="bg-white dark:bg-gray-700 p-6 rounded-lg space-y-4">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                Product Information
+              </h2>
+              
               <div>
-                <label htmlFor="origin.name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Location Name
+                <label htmlFor="productName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Product Name
                 </label>
                 <input 
                   type="text" 
-                  id="origin.name" 
-                  value={formData.origin.name}
+                  id="productName" 
+                  value={formData.productName}
                   onChange={handleChange}
                   className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
-                           bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                           bg-white dark:bg-gray-800 text-gray-900 dark:text-white
                            focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  placeholder="Enter location name"
                   required
                 />
               </div>
+
+              <div>
+                <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Description
+                </label>
+                <textarea 
+                  id="description" 
+                  value={formData.description}
+                  onChange={handleChange}
+                  rows={3}
+                  className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
+                           bg-white dark:bg-gray-800 text-gray-900 dark:text-white
+                           focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  required
+                />
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="origin.latitude" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Latitude
+                  <label htmlFor="weight" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Weight (kg)
                   </label>
                   <input 
                     type="text" 
-                    id="origin.latitude" 
-                    value={formData.origin.latitude}
+                    id="weight" 
+                    value={formData.weight}
                     onChange={handleChange}
                     className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
-                             bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                             bg-white dark:bg-gray-800 text-gray-900 dark:text-white
                              focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                    placeholder="e.g., 40.7128"
                     required
                   />
                 </div>
                 <div>
-                  <label htmlFor="origin.longitude" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Longitude
+                  <label htmlFor="dimensions" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Dimensions (LxWxH cm)
                   </label>
                   <input 
                     type="text" 
-                    id="origin.longitude" 
-                    value={formData.origin.longitude}
+                    id="dimensions" 
+                    value={formData.dimensions}
                     onChange={handleChange}
                     className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
-                             bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                             bg-white dark:bg-gray-800 text-gray-900 dark:text-white
                              focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                    placeholder="e.g., -74.0060"
                     required
                   />
                 </div>
-              </div>
-            </div>
-
-            {/* Destination Location */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white">Destination Location</h3>
-              <div>
-                <label htmlFor="destination.name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Location Name
-                </label>
-                <input 
-                  type="text" 
-                  id="destination.name" 
-                  value={formData.destination.name}
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
-                           bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                           focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  placeholder="Enter location name"
-                  required
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="destination.latitude" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Latitude
-                  </label>
-                  <input 
-                    type="text" 
-                    id="destination.latitude" 
-                    value={formData.destination.latitude}
-                    onChange={handleChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
-                             bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                             focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                    placeholder="e.g., 34.0522"
-                    required
-                  />
-                </div>
-                <div>
-                  <label htmlFor="destination.longitude" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Longitude
-                  </label>
-                  <input 
-                    type="text" 
-                    id="destination.longitude" 
-                    value={formData.destination.longitude}
-                    onChange={handleChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
-                             bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                             focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                    placeholder="e.g., -118.2437"
-                    required
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label htmlFor="deliveredOn" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Delivered On
-                </label>
-                <input 
-                  type="date" 
-                  id="deliveredOn" 
-                  value={formData.deliveredOn}
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
-                           bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                           focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  required
-                />
-              </div>
-
-              <div>
-                <label htmlFor="arrivesOn" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Arrives On
-                </label>
-                <input 
-                  type="date" 
-                  id="arrivesOn" 
-                  value={formData.arrivesOn}
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
-                           bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                           focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="isTemperatureSensitive"
-                  checked={formData.isTemperatureSensitive}
-                  onChange={handleChange}
-                  className="h-4 w-4 text-orange-500 focus:ring-orange-500 border-gray-300 rounded"
-                />
-                <label htmlFor="isTemperatureSensitive" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
-                  Temperature Sensitive
-                </label>
               </div>
 
               <div className="flex items-center">
                 <input
                   type="checkbox"
-                  id="isHumiditySensitive"
-                  checked={formData.isHumiditySensitive}
+                  id="isFragile"
+                  checked={formData.isFragile}
                   onChange={handleChange}
                   className="h-4 w-4 text-orange-500 focus:ring-orange-500 border-gray-300 rounded"
                 />
-                <label htmlFor="isHumiditySensitive" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
-                  Humidity Sensitive
+                <label htmlFor="isFragile" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+                  Fragile Package
                 </label>
+              </div>
+            </div>
+
+            {/* Sender Information */}
+            <div className="bg-white dark:bg-gray-700 p-6 rounded-lg space-y-4">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                Sender Information
+              </h2>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="senderName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Name
+                  </label>
+                  <input 
+                    type="text" 
+                    id="senderName" 
+                    value={formData.senderName}
+                    onChange={handleChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
+                             bg-white dark:bg-gray-800 text-gray-900 dark:text-white
+                             focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="senderEmail" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Email
+                  </label>
+                  <input 
+                    type="email" 
+                    id="senderEmail" 
+                    value={formData.senderEmail}
+                    onChange={handleChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
+                             bg-white dark:bg-gray-800 text-gray-900 dark:text-white
+                             focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="senderPhone" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Phone
+                </label>
+                <input 
+                  type="tel" 
+                  id="senderPhone" 
+                  value={formData.senderPhone}
+                  onChange={handleChange}
+                  className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
+                           bg-white dark:bg-gray-800 text-gray-900 dark:text-white
+                           focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  required
+                />
+              </div>
+
+              <div>
+                <label htmlFor="pickupAddress" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Pickup Address
+                </label>
+                <textarea 
+                  id="pickupAddress" 
+                  value={formData.pickupAddress}
+                  onChange={handleChange}
+                  rows={3}
+                  className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
+                           bg-white dark:bg-gray-800 text-gray-900 dark:text-white
+                           focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Receiver Information */}
+            <div className="bg-white dark:bg-gray-700 p-6 rounded-lg space-y-4">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                Receiver Information
+              </h2>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="receiverName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Name
+                  </label>
+                  <input 
+                    type="text" 
+                    id="receiverName" 
+                    value={formData.receiverName}
+                    onChange={handleChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
+                             bg-white dark:bg-gray-800 text-gray-900 dark:text-white
+                             focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="receiverEmail" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Email
+                  </label>
+                  <input 
+                    type="email" 
+                    id="receiverEmail" 
+                    value={formData.receiverEmail}
+                    onChange={handleChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
+                             bg-white dark:bg-gray-800 text-gray-900 dark:text-white
+                             focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="receiverPhone" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Phone
+                </label>
+                <input 
+                  type="tel" 
+                  id="receiverPhone" 
+                  value={formData.receiverPhone}
+                  onChange={handleChange}
+                  className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
+                           bg-white dark:bg-gray-800 text-gray-900 dark:text-white
+                           focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  required
+                />
+              </div>
+
+              <div>
+                <label htmlFor="deliveryAddress" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Delivery Address
+                </label>
+                <textarea 
+                  id="deliveryAddress" 
+                  value={formData.deliveryAddress}
+                  onChange={handleChange}
+                  rows={3}
+                  className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
+                           bg-white dark:bg-gray-800 text-gray-900 dark:text-white
+                           focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Additional Information */}
+            <div className="bg-white dark:bg-gray-700 p-6 rounded-lg space-y-4">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                Additional Information
+              </h2>
+              
+              <div>
+                <label htmlFor="specialInstructions" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Special Instructions
+                </label>
+                <textarea 
+                  id="specialInstructions" 
+                  value={formData.specialInstructions}
+                  onChange={handleChange}
+                  rows={3}
+                  className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 
+                           bg-white dark:bg-gray-800 text-gray-900 dark:text-white
+                           focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                />
               </div>
             </div>
 
             <button 
               type="submit" 
-              className="w-full bg-orange-500 text-white p-3 rounded font-bold 
+              className="w-full bg-orange-500 text-white p-4 rounded-lg font-bold 
                        hover:bg-orange-600 transition-colors disabled:bg-gray-400"
-              disabled={isLoading || !isFormValid}
+              disabled={isLoading}
             >
               {isLoading ? 'Creating Shipment...' : 'Create Shipment'}
             </button>
