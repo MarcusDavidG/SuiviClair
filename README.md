@@ -1,163 +1,151 @@
-# BlockRoute - Decentralized Supply Chain Management
+# SuiviClair - Privacy-First Supply Chain Management on Starknet
 
-BlockRoute is a decentralized application (dApp) built on the Lisk blockchain that enables transparent and efficient supply chain management. It allows users to create, track, and manage shipments with features like quality checks, temperature monitoring, and dispute resolution.
+SuiviClair ("Clear Tracking" in French) is a revolutionary privacy-centric supply chain management dApp built on Starknet, leveraging both Cairo SDK and Calimero SDK to provide secure, private, and transparent supply chain operations.
 
-## Repository Structure
+## 🔒 Privacy Features
 
-The repository contains both the smart contracts and frontend code in a monorepo structure:
+- **Private Shipment Data**: Using Calimero SDK for encrypted storage of sensitive shipment details
+- **Zero-Knowledge Proofs**: Leveraging Starknet's Cairo for verifiable tracking without revealing sensitive data
+- **Selective Disclosure**: Granular control over what information is shared with different stakeholders
+- **Private State Channels**: Secure communication channels between parties using Calimero's privacy infrastructure
 
-```
-Block-Route/
-├── frontend/                # React frontend application
-│   ├── src/
-│   │   ├── components/     # Reusable UI components
-│   │   ├── config/        # Configuration files
-│   │   ├── hooks/         # Custom React hooks
-│   │   ├── pages/         # Page components
-│   │   ├── providers/     # Context providers
-│   │   └── styles/        # CSS and styling files
-│   └── public/            # Static assets
-├── src/                   # Smart contract source files
-│   ├── interfaces/        # Contract interfaces
-│   └── libraries/         # Solidity libraries
-├── script/                # Deployment scripts
-└── test/                  # Contract test files
-```
+## 🚀 Core Features
 
-## Features
+- **Private Shipment Creation**:
+  - Encrypted product details
+  - Private origin/destination locations
+  - Confidential temperature and humidity settings
+  - Secure document attachments
 
-- **Shipment Creation**: Create new shipments with detailed information including:
-  - Product details
-  - Origin and destination locations
-  - Temperature and humidity sensitivity settings
-  - Estimated delivery dates
-  - Document attachments (IPFS integration)
+- **Privacy-Preserving Tracking**:
+  - Zero-knowledge location updates
+  - Encrypted environmental monitoring
+  - Private transit history
+  - Selective data sharing
 
-- **Real-time Tracking**: Monitor shipments with:
-  - Current status updates
-  - Location tracking
-  - Temperature and humidity monitoring
-  - Transit history
+- **Secure Quality Control**:
+  - Private inspection records
+  - Encrypted quality metrics
+  - Confidential inspector notes
+  - Secure alert system
 
-- **Quality Control**:
-  - Quality inspection records
-  - Pass/fail status tracking
-  - Inspector notes and documentation
-  - Temperature and humidity alerts
+## 🛠 Technology Stack
 
-- **Dispute Resolution**:
-  - Raise and track disputes
-  - Multi-party voting system
-  - Resolution documentation
-  - Status tracking
-
-## Technology Stack
+- **Blockchain & Privacy**:
+  - Starknet (Layer 2 scaling with built-in privacy)
+  - Cairo SDK (Zero-knowledge proofs and secure computation)
+  - Calimero SDK (Privacy infrastructure and secure data management)
 
 - **Frontend**:
   - React + TypeScript
-  - Vite
   - TailwindCSS
-  - Wagmi (Ethereum interactions)
-  - React Router (Navigation)
+  - Starknet.js
+  - Calimero Client SDK
 
-- **Smart Contracts**:
-  - Solidity
-  - Foundry (Development framework)
-  - OpenZeppelin (Security standards)
+## 🔍 Implementation Details
 
-- **Blockchain**:
-  - Network: Lisk Sepolia Testnet
-  - RPC URL: https://rpc.sepolia-api.lisk.com
-  - Explorer: https://sepolia-blockscout.lisk.com
+### Cairo SDK Integration
+- Zero-knowledge proofs for shipment verification
+- Private state transitions
+- Secure computation for supply chain logic
+- Privacy-preserving smart contracts
 
-## Getting Started
+### Calimero SDK Usage
+- Encrypted data storage
+- Private state channels
+- Secure key management
+- Confidential transaction handling
+
+## 🚀 Getting Started
 
 ### Prerequisites
-
 - Node.js v18+
-- Git
-- MetaMask or compatible Web3 wallet
+- Cairo toolchain
+- Calimero SDK access
 
 ### Installation
 
 1. Clone the repository:
-   ```bash
-   git clone https://github.com/MarcusDavidG/Block-Route.git
-   cd Block-Route
-   ```
-
-2. Install frontend dependencies:
-   ```bash
-   cd frontend
-   npm install
-   ```
-
-3. Create a `.env` file in the frontend directory:
-   ```env
-   VITE_WALLET_CONNECT_PROJECT_ID=your_project_id
-   ```
-
-4. Start the development server:
-   ```bash
-   npm run dev
-   ```
-
-### Smart Contract Development
-
-1. Install Foundry:
-   ```bash
-   curl -L https://foundry.paradigm.xyz | bash
-   foundryup
-   ```
+```bash
+git clone https://github.com/MarcusDavidG/SuiviClair.git
+cd SuiviClair
+```
 
 2. Install dependencies:
-   ```bash
-   forge install
-   ```
+```bash
+cd frontend
+npm install
+```
 
-3. Run tests:
-   ```bash
-   forge test
-   ```
+3. Configure environment:
+```bash
+cp .env.example .env
+# Add your Calimero and Starknet credentials
+```
 
-4. Deploy contracts:
-   ```bash
-   forge script script/CreateShipment.s.sol --rpc-url https://rpc.sepolia-api.lisk.com --broadcast
-   ```
+4. Start development server:
+```bash
+npm run dev
+```
 
-## Usage
+## 🏗 Architecture
 
-1. Connect your Web3 wallet to the Lisk Sepolia testnet
-2. Navigate to the Create Shipment page to create a new shipment
-3. Fill in the required details:
-   - Product name and description
-   - Origin and destination locations
-   - Delivery dates
-   - Temperature/humidity sensitivity settings
-4. Submit the transaction and wait for confirmation
-5. Track your shipment on the Dashboard
-6. Update shipment status and handle disputes as needed
+### Privacy Layer (Calimero SDK)
+- Encrypted data storage
+- Secure communication channels
+- Private state management
+- Access control
 
-## Contributing
+### Zero-Knowledge Layer (Cairo SDK)
+- ZK-proofs generation
+- Private computation
+- Secure state transitions
+- Verification logic
+
+## 🔐 Privacy Considerations
+
+- All sensitive data is encrypted using Calimero SDK
+- Zero-knowledge proofs ensure verifiability without data exposure
+- Granular access control for different stakeholders
+- Secure key management and rotation
+
+## 🧪 Testing
+
+```bash
+# Run Cairo tests
+cairo-test ./tests
+
+# Run frontend tests
+npm test
+```
+
+## 📈 Future Enhancements
+
+- Advanced ZK-proof schemes for complex supply chain operations
+- Enhanced privacy-preserving analytics
+- Multi-party computation features
+- Cross-chain private bridges
+
+## 👥 Contributing
 
 1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/your-feature`
-3. Commit changes: `git commit -am 'Add new feature'`
-4. Push to the branch: `git push origin feature/your-feature`
-5. Submit a pull request
+2. Create feature branch: `git checkout -b feature/privacy-enhancement`
+3. Commit changes: `git commit -am 'Add privacy feature'`
+4. Push branch: `git push origin feature/privacy-enhancement`
+5. Submit pull request
 
-## Security
+## 🔒 Security
 
-- All smart contracts are thoroughly tested and follow best practices
-- OpenZeppelin contracts are used for standard implementations
-- Regular security audits are performed
-- Bug bounty program is available for responsible disclosure
+- Regular security audits
+- Privacy-focused code reviews
+- Encrypted communication channels
+- Secure key management
 
-## License
+## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License - see [LICENSE](LICENSE)
 
-## Contact
+## 📞 Contact
 
 - GitHub: [@MarcusDavidG](https://github.com/MarcusDavidG)
-- Project Link: [https://github.com/MarcusDavidG/Block-Route](https://github.com/MarcusDavidG/Block-Route)
+- Project: [https://github.com/MarcusDavidG/SuiviClair](https://github.com/MarcusDavidG/SuiviClair)
