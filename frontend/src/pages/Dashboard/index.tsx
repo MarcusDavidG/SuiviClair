@@ -5,7 +5,7 @@ import { ShipmentStatus, type Shipment } from '../../config/contracts'
 function getStatusColor(status: ShipmentStatus): string {
   switch (status) {
     case ShipmentStatus.Created:
-      return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+      return 'bg-blue-300 text-blue-950 dark:bg-blue-900 dark:text-blue-200'
     case ShipmentStatus.QualityChecked:
       return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
     case ShipmentStatus.InTransit:
@@ -70,48 +70,59 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
+    <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-white mt-8">
       <div className="container mx-auto px-4 py-8">
         {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 ">
+          <div className="p-6 rounded-lg bg-gray-300 dark:bg-gray-900">
             <h3 className="text-lg font-semibold mb-2">Total Shipments</h3>
-            <p className="text-3xl font-bold text-orange-500">{totalShipments?.toString() || '0'}</p>
+            <p className="text-3xl font-bold text-cyan-500">
+              {totalShipments?.toString() || "0"}
+            </p>
           </div>
         </div>
 
         {/* Recent Activity */}
-        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-6">
+        <div className="bg-gray-300 dark:bg-gray-900 rounded-lg p-6">
           <h3 className="text-xl font-bold mb-4">Recent Shipments</h3>
           <div className="space-y-4">
             {isLoading ? (
               <div className="text-center py-4">
-                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-orange-500 mx-auto"></div>
-                <p className="mt-2 text-gray-600 dark:text-gray-400">Loading shipments...</p>
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-cyan-500 mx-auto"></div>
+                <p className="mt-2 text-gray-600 dark:text-gray-400">
+                  Loading shipments...
+                </p>
               </div>
             ) : shipments.length > 0 ? (
               shipments.map((shipment) => (
-                <div 
+                <div
                   key={shipment.id.toString()}
                   className="flex items-center justify-between p-4 bg-white dark:bg-gray-700 rounded-lg"
                 >
                   <div>
                     <h4 className="font-semibold">{shipment.productName}</h4>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      From: {truncateAddress(shipment.supplier)} To: {truncateAddress(shipment.receiver)}
+                      From: {truncateAddress(shipment.supplier)} To:{" "}
+                      {truncateAddress(shipment.receiver)}
                     </p>
                   </div>
-                  <span className={`px-3 py-1 rounded-full text-sm ${getStatusColor(shipment.status)}`}>
+                  <span
+                    className={`px-3 py-1 rounded-full text-sm ${getStatusColor(
+                      shipment.status
+                    )}`}
+                  >
                     {ShipmentStatus[shipment.status]}
                   </span>
                 </div>
               ))
             ) : (
-              <p className="text-gray-600 dark:text-gray-400">No recent shipments</p>
+              <p className="text-gray-600 dark:text-gray-400">
+                No recent shipments
+              </p>
             )}
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

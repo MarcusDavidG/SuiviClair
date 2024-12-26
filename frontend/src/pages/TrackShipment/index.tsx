@@ -81,7 +81,7 @@ export default function TrackShipment() {
 
   if (!address) {
     return (
-      <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
+      <div className="h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center p-8">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
             Connect Your Wallet
@@ -96,12 +96,12 @@ export default function TrackShipment() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
+    <div className="mt-10 min-h-screen text-gray-900 bg-white dark:bg-gray-950 dark:text-white">
       {!isTracking ? (
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-md mx-auto">
-            <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-8">
-              <h1 className="text-2xl font-bold text-orange-400 mb-6 text-center">
+            <div className="bg-gray-300 dark:bg-gray-900 rounded-lg p-8">
+              <h1 className="text-2xl font-bold text-cyan-500 dark:text-cyan-300 mb-6 text-center">
                 Track Your Shipment
               </h1>
 
@@ -113,7 +113,10 @@ export default function TrackShipment() {
 
               <form onSubmit={handleTrackShipment} className="space-y-6">
                 <div>
-                  <label htmlFor="shipmentId" className="block text-sm font-medium mb-2">
+                  <label
+                    htmlFor="shipmentId"
+                    className="block text-sm font-medium mb-2"
+                  >
                     Shipment ID
                   </label>
                   <input
@@ -123,15 +126,15 @@ export default function TrackShipment() {
                     onChange={(e) => setShipmentId(e.target.value)}
                     className="w-full p-3 bg-white dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 
                              text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 
-                             focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                             focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
                     placeholder="Enter your shipment ID"
                     required
                   />
                 </div>
                 <button
                   type="submit"
-                  className="w-full bg-orange-500 text-white p-3 rounded font-bold 
-                           hover:bg-orange-600 transition-colors disabled:bg-gray-400"
+                  className="w-full bg-cyan-500 text-gray-100 p-3 rounded font-bold 
+                           hover:bg-cyan-600 transition-colors disabled:bg-gray-400"
                 >
                   Track Shipment
                 </button>
@@ -148,7 +151,7 @@ export default function TrackShipment() {
                 <h2 className="text-lg font-bold">Shipment #{shipmentId}</h2>
                 {shipment && (
                   <>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 ">
                       Status: {ShipmentStatus[shipment.status]}
                     </p>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -159,7 +162,7 @@ export default function TrackShipment() {
               </div>
               <button
                 onClick={handleReset}
-                className="bg-orange-500 px-4 py-2 rounded hover:bg-orange-600"
+                className="bg-cyan-500 px-4 py-2 rounded hover:bg-cyan-600 font-bold text-gray-100"
               >
                 Track Another
               </button>
@@ -180,10 +183,10 @@ export default function TrackShipment() {
                   <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
                   {/* Origin Marker */}
-                  <Marker 
+                  <Marker
                     position={[
                       parseFloat(shipment.origin.latitude),
-                      parseFloat(shipment.origin.longitude)
+                      parseFloat(shipment.origin.longitude),
                     ]}
                     icon={originIcon}
                   >
@@ -192,17 +195,19 @@ export default function TrackShipment() {
                         <h3 className="font-bold">Origin</h3>
                         <p>{shipment.origin.name}</p>
                         <p className="text-sm text-gray-500">
-                          {new Date(Number(shipment.origin.timestamp)).toLocaleString()}
+                          {new Date(
+                            Number(shipment.origin.timestamp)
+                          ).toLocaleString()}
                         </p>
                       </div>
                     </Popup>
                   </Marker>
 
                   {/* Destination Marker */}
-                  <Marker 
+                  <Marker
                     position={[
                       parseFloat(shipment.destination.latitude),
-                      parseFloat(shipment.destination.longitude)
+                      parseFloat(shipment.destination.longitude),
                     ]}
                     icon={destinationIcon}
                   >
@@ -211,17 +216,28 @@ export default function TrackShipment() {
                         <h3 className="font-bold">Destination</h3>
                         <p>{shipment.destination.name}</p>
                         <p className="text-sm text-gray-500">
-                          ETA: {new Date(Number(shipment.estimatedDeliveryDate)).toLocaleString()}
+                          ETA:{" "}
+                          {new Date(
+                            Number(shipment.estimatedDeliveryDate)
+                          ).toLocaleString()}
                         </p>
                       </div>
                     </Popup>
                   </Marker>
 
                   {/* Map bounds adjuster and route line */}
-                  <MapBounds coordinates={[
-                    [parseFloat(shipment.origin.latitude), parseFloat(shipment.origin.longitude)],
-                    [parseFloat(shipment.destination.latitude), parseFloat(shipment.destination.longitude)]
-                  ]} />
+                  <MapBounds
+                    coordinates={[
+                      [
+                        parseFloat(shipment.origin.latitude),
+                        parseFloat(shipment.origin.longitude),
+                      ],
+                      [
+                        parseFloat(shipment.destination.latitude),
+                        parseFloat(shipment.destination.longitude),
+                      ],
+                    ]}
+                  />
                 </MapContainer>
               )}
             </div>
@@ -233,5 +249,5 @@ export default function TrackShipment() {
         </div>
       )}
     </div>
-  )
+  );
 }
