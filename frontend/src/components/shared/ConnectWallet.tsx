@@ -1,40 +1,43 @@
-import { useAccount, useConnect, useDisconnect } from 'wagmi'
-import { useState } from 'react'
-import { Connector } from 'wagmi'
+import { useAccount, useConnect, useDisconnect } from "wagmi";
+import { useState } from "react";
+import { Connector } from "wagmi";
 
 interface ConnectWalletProps {
-  className?: string
-  fullScreen?: boolean
+  className?: string;
+  fullScreen?: boolean;
 }
 
-export function ConnectWallet({ className = '', fullScreen = false }: ConnectWalletProps) {
-  const { address, isConnecting } = useAccount()
-  const { disconnect } = useDisconnect()
-  const [showModal, setShowModal] = useState(false)
-  const { connectors, connect } = useConnect()
+export function ConnectWallet({
+  className = "",
+  fullScreen = false,
+}: ConnectWalletProps) {
+  const { address, isConnecting } = useAccount();
+  const { disconnect } = useDisconnect();
+  const [showModal, setShowModal] = useState(false);
+  const { connectors, connect } = useConnect();
 
   const handleConnect = (connector: Connector) => {
-    connect({ connector })
-    setShowModal(false)
-  }
+    connect({ connector });
+    setShowModal(false);
+  };
 
   const handleDisconnect = async () => {
-    disconnect()
+    disconnect();
     // Clear any stored connection data
-    localStorage.removeItem('wagmi.store')
-    localStorage.removeItem('wagmi.wallet')
-    localStorage.removeItem('wagmi.connected')
+    localStorage.removeItem("wagmi.store");
+    localStorage.removeItem("wagmi.wallet");
+    localStorage.removeItem("wagmi.connected");
     // Force page reload to clear any cached wallet state
-    window.location.reload()
-  }
+    window.location.reload();
+  };
 
   const handleClick = () => {
     if (address) {
-      handleDisconnect()
+      handleDisconnect();
     } else {
-      setShowModal(true)
+      setShowModal(true);
     }
-  }
+  };
 
   const modal = showModal && !address && (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -55,9 +58,9 @@ export function ConnectWallet({ className = '', fullScreen = false }: ConnectWal
                 {connector.name}
               </span>
               <span className="text-2xl">
-                {connector.name === 'MetaMask' }
-                {connector.name === 'Coinbase Wallet'}
-                {connector.name === 'WalletConnect'}
+                {connector.name === "MetaMask"}
+                {connector.name === "Coinbase Wallet"}
+                {connector.name === "WalletConnect"}
               </span>
             </button>
           ))}
@@ -72,12 +75,12 @@ export function ConnectWallet({ className = '', fullScreen = false }: ConnectWal
         </button>
       </div>
     </div>
-  )
+  );
 
   const content = (
     <div className="text-center p-8">
       <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-        {address ? 'Wallet Connected' : 'Connect Your Wallet'}
+        {address ? "Wallet Connected" : "Connect Your Wallet"}
       </h2>
       {address && (
         <p className="text-gray-600 dark:text-gray-400 mb-6 font-mono">
@@ -87,70 +90,72 @@ export function ConnectWallet({ className = '', fullScreen = false }: ConnectWal
       <button
         onClick={handleClick}
         disabled={isConnecting}
-        className={`bg-orange-500 text-white px-6 py-3 rounded font-bold 
-                   hover:bg-orange-600 disabled:bg-gray-400 transition-colors ${className}`}
+        className={`bg-cyan-400 text-white px-6 py-3 rounded font-bold 
+                   hover:bg-cyan-600 disabled:bg-gray-400 transition-colors ${className} `}
       >
-        {isConnecting ? 'Connecting...' : address ? 'Disconnect' : 'Connect Wallet'}
+        {isConnecting
+          ? "Connecting..."
+          : address
+          ? "Disconnect"
+          : "Connect Wallet"}
       </button>
       {modal}
     </div>
-  )
+  );
 
   if (fullScreen) {
     return (
       <div className="fixed inset-0 bg-gray-900 bg-opacity-90 flex items-center justify-center z-50">
         {content}
       </div>
-    )
+    );
   }
 
-  return content
+  return content;
 }
 
 export function WalletButton() {
-  const { address, isConnecting } = useAccount()
-  const { disconnect } = useDisconnect()
-  const [showModal, setShowModal] = useState(false)
-  const { connectors, connect } = useConnect()
+  const { address, isConnecting } = useAccount();
+  const { disconnect } = useDisconnect();
+  const [showModal, setShowModal] = useState(false);
+  const { connectors, connect } = useConnect();
 
   const handleConnect = (connector: Connector) => {
-    connect({ connector })
-    setShowModal(false)
-  }
+    connect({ connector });
+    setShowModal(false);
+  };
 
   const handleDisconnect = async () => {
-    disconnect()
+    disconnect();
     // Clear any stored connection data
-    localStorage.removeItem('wagmi.store')
-    localStorage.removeItem('wagmi.wallet')
-    localStorage.removeItem('wagmi.connected')
+    localStorage.removeItem("wagmi.store");
+    localStorage.removeItem("wagmi.wallet");
+    localStorage.removeItem("wagmi.connected");
     // Force page reload to clear any cached wallet state
-    window.location.reload()
-  }
+    window.location.reload();
+  };
 
   const handleClick = () => {
     if (address) {
-      handleDisconnect()
+      handleDisconnect();
     } else {
-      setShowModal(true)
+      setShowModal(true);
     }
-  }
+  };
 
   return (
     <>
       <button
         onClick={handleClick}
         disabled={isConnecting}
-        className="bg-orange-500 text-white px-4 py-2 rounded font-bold 
-                   hover:bg-orange-600 disabled:bg-gray-400 transition-colors"
+        className="bg-cyan-400 text-gray-900 px-4 py-2 rounded font-bold 
+                   hover:bg-cyan-600 disabled:bg-gray-400 transition-colors md:w-auto min-w-[120px]"
       >
-        {isConnecting ? (
-          'Connecting...'
-        ) : address ? (
-          `${address.slice(0, 6)}...${address.slice(-4)}`
-        ) : (
-          'Connect Wallet'
-        )}
+        {isConnecting
+          ? "Connecting..."
+          : address
+          ? `${address.slice(0, 6)}...${address.slice(-4)}`
+          : "Connect Wallet"}
       </button>
 
       {showModal && !address && (
@@ -172,9 +177,9 @@ export function WalletButton() {
                     {connector.name}
                   </span>
                   <span className="text-2xl">
-                    {connector.name === 'MetaMask' }
-                    {connector.name === 'Coinbase Wallet'}
-                    {connector.name === 'WalletConnect'}
+                    {connector.name === "MetaMask"}
+                    {connector.name === "Coinbase Wallet"}
+                    {connector.name === "WalletConnect"}
                   </span>
                 </button>
               ))}
@@ -191,5 +196,5 @@ export function WalletButton() {
         </div>
       )}
     </>
-  )
+  );
 }
