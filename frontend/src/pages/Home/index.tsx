@@ -23,7 +23,7 @@ export function Home() {
     <>
       {/* Hero Section */}
       <section className="text-center p-4 relative pt-16 h-screen flex flex-col-reverse md:flex-row bg-white dark:bg-gray-950 ">
-        <div className="relative w-full h-2/3 md:h-full md:w-1/2">
+        <div className="relative w-full h-2/3 md:h-full md:w-1/2 ">
           {images.map((image, index) => (
             <div
               key={index}
@@ -34,14 +34,15 @@ export function Home() {
               <img
                 src={image}
                 alt={`Freight Image ${index + 1}`}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover rounded-lg"
               />
             </div>
           ))}
         </div>
         <div className="flex flex-col justify-center items-center text-center p-4 md:w-1/2 ">
           <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-800 dark:text-gray-100 relative z-10">
-            Revolutionize Supply Chain Tracking with <div className="text-cyan-500">Suiviclair</div>
+            Revolutionize Supply Chain Tracking with{" "}
+            <div className="text-cyan-500">Suiviclair</div>
           </h1>
           <p className="text-sm md:text-base lg:text-lg text-gray-600 dark:text-gray-300 mt-4 max-w-xs md:max-w-md relative z-10">
             Experience real-time transparency, trust, and efficiency with
